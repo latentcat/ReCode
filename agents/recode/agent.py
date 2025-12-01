@@ -47,9 +47,9 @@ class ReCodeAgent(Agent):
         self.previous_node = None
         self.is_start = False
 
-        self.max_depth: int = running_config.get('max_depth', DEFAULT_MAX_DEPTH)
-        self.max_retry: int = running_config.get('max_retry', DEFAULT_MAX_RETRY)
-        self.max_rewrite: int = running_config.get('max_rewrite', DEFAULT_MAX_REWRITE)
+        self.max_depth: int = running_config.get('max_depth') or DEFAULT_MAX_DEPTH
+        self.max_retry: int = running_config.get('max_retry') or DEFAULT_MAX_RETRY
+        self.max_rewrite: int = running_config.get('max_rewrite') or DEFAULT_MAX_REWRITE
         
         if init_info and 'task_type' in init_info and init_info['task_type']:
             self.task_type = init_info['task_type'].lower()
