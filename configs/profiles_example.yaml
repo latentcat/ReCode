@@ -1,11 +1,31 @@
+# LLM 配置文件示例
+# 
+# 使用方法：
+#   1. 复制此文件为 profiles.yaml
+#   2. 填入你的 API Key 和配置
+#   3. 运行时通过 --profile 参数指定配置名
+#
+# 示例：python run.py -a recode -e alfworld --profile gpt-4o
+
 models:
+  # 默认配置（使用 gpt-4o-mini，成本较低）
   default:
-    api_key: "sk-your_api_key"
-    base_url: "https://your.base.url/v1"
-    model: "gpt-4o-mini"
-    temperature: 0.0
+    api_key: "sk-your_api_key"           # 替换为你的 API Key
+    base_url: "https://your.base.url/v1" # API 基础 URL（OpenAI 官方可省略）
+    model: "gpt-4o-mini"                 # 模型名称
+    temperature: 0.0                      # 温度参数（0 表示确定性输出）
+  
+  # GPT-4o 配置（性能更好，成本较高）
   gpt-4o:
     api_key: "sk-your_api_key"
     base_url: "https://your.base.url/v1"
     model: "gpt-4o"
-    temperature: 0.7
+    temperature: 0.7                      # 稍高的温度，输出更多样
+
+# 你可以添加更多配置，例如：
+# 
+#   claude:
+#     api_key: "sk-your_claude_key"
+#     base_url: "https://api.anthropic.com/v1"
+#     model: "claude-3-opus-20240229"
+#     temperature: 0.5

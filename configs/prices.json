@@ -1,4 +1,8 @@
 {
+    "_comment": "LLM 价格配置（单位：美元/百万 token）",
+    "_comment_input": "input 表示输入 token 的价格",
+    "_comment_output": "output 表示输出 token 的价格",
+    
     "gpt-4o": {"input": 2.5, "output": 10.0},
     "gpt-4o-2024-08-06": {"input": 2.5, "output": 10.0},
     "gpt-4o-mini": {"input": 0.15, "output": 0.6},
