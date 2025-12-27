@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReCode+ 演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        
+        .panel {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        /* 聊天面板 */
+        #chat-panel {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+        
+        .message.thinking {
+            background: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .message.explanation {
+            background: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        
+        .message.approval {
+            background: #78350f;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .message.error {
+            background: #7f1d1d;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        button:hover {
+            background: #2563eb;
+        }
+        
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+        }
+        
+        /* 可视化面板 */
+        #tree-panel {
+            overflow-y: auto;
+        }
+        
+        .node {
+            margin: 10px 0;
+            padding: 15px;
+            background: #0f172a;
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .node.completed {
+            border-left-color: #10b981;
+        }
+        
+        .node.error {
+            border-left-color: #ef4444;
+        }
+        
+        .node.executing {
+            border-left-color: #06b6d4;
+        }
+        
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .node-intent {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .node-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: #334155;
+        }
+        
+        .node-code {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
+            padding: 8px;
+            background: #020617;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .approval-buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-approve {
+            background: #10b981;
+        }
+        
+        .btn-approve:hover {
+            background: #059669;
+        }
+        
+        .btn-reject {
+            background: #ef4444;
+        }
+        
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+        
+        #status {
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .connected {
+            color: #10b981;
+        }
+        
+        .disconnected {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 聊天面板 -->
+        <div class="panel" id="chat-panel">
+            <h2>💬 对话</h2>
+            <div id="status" class="disconnected">● 未连接</div>
+            <div id="messages"></div>
+            <div class="input-area">
+                <input 
+                    type="text" 
+                    id="user-input" 
+                    placeholder="输入你的需求..." 
+                    disabled
+                />
+                <button id="send-btn" disabled>发送</button>
+            </div>
+        </div>
+        
+        <!-- 节点树可视化 -->
+        <div class="panel" id="tree-panel">
+            <h2>🌳 节点树</h2>
+            <div id="tree-view"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let sessionId = 'demo_' + Date.now();
+        
+        const messagesEl = document.getElementById('messages');
+        const treeViewEl = document.getElementById('tree-view');
+        const statusEl = document.getElementById('status');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        // 初始化
+        async function init() {
+            // 创建会话
+            const response = await fetch('http://localhost:8000/sessions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    project_id: 'demo',
+                    llm_profile: 'default'
+                })
+            });
+            
+            if (!response.ok) {
+                addMessage('error', '创建会话失败');
+                return;
+            }
+            
+            // 连接 WebSocket
+            ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+            
+            ws.onopen = () => {
+                statusEl.textContent = '● 已连接';
+                statusEl.className = 'connected';
+                userInput.disabled = false;
+                sendBtn.disabled = false;
+                addMessage('explanation', '连接成功！输入你的需求开始规划。');
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleMessage(data);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket 错误:', error);
+                addMessage('error', 'WebSocket 连接错误');
+            };
+            
+            ws.onclose = () => {
+                statusEl.textContent = '● 已断开';
+                statusEl.className = 'disconnected';
+                userInput.disabled = true;
+                sendBtn.disabled = true;
+            };
+        }
+        
+        // 处理消息
+        function handleMessage(data) {
+            const type = data.type;
+            const content = data.content;
+            
+            if (type === 'thinking') {
+                addMessage('thinking', '🤔 ' + content);
+            } else if (type === 'explanation') {
+                addMessage('explanation', '💡 ' + content);
+            } else if (type === 'node_update') {
+                updateTree(content);
+            } else if (type === 'approval_request') {
+                addApprovalRequest(content);
+            } else if (type === 'error') {
+                addMessage('error', '❌ ' + content);
+            } else if (type === 'completion') {
+                addMessage('explanation', '🎉 ' + content);
+            }
+        }
+        
+        // 添加消息
+        function addMessage(type, text) {
+            const div = document.createElement('div');
+            div.className = 'message ' + type;
+            div.textContent = text;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+        
+        // 添加审批请求
+        function addApprovalRequest(content) {
+            const div = document.createElement('div');
+            div.className = 'message approval';
+            
+            const toolCall = content.tool_call;
+            const explanation = content.explanation;
+            
+            div.innerHTML = `
+                <div>⏸️ ${explanation}</div>
+                <div style="margin-top: 8px; font-size: 12px;">
+                    工具: ${toolCall.name}<br>
+                    描述: ${toolCall.description}
+                </div>
+                <div class="approval-buttons">
+                    <button class="btn-approve" onclick="approve('${toolCall.id}')">✅ 批准</button>
+                    <button class="btn-reject" onclick="reject('${toolCall.id}')">❌ 拒绝</button>
+                </div>
+            `;
+            
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+        
+        // 批准工具
+        function approve(toolCallId) {
+            ws.send(JSON.stringify({
+                type: 'approval_response',
+                tool_call_id: toolCallId,
+                approved: true
+            }));
+            addMessage('explanation', '✅ 已批准');
+        }
+        
+        // 拒绝工具
+        function reject(toolCallId) {
+            ws.send(JSON.stringify({
+                type: 'approval_response',
+                tool_call_id: toolCallId,
+                approved: false
+            }));
+            addMessage('explanation', '❌ 已拒绝');
+        }
+        
+        // 更新树视图
+        function updateTree(content) {
+            const node = content.node;
+            
+            let nodeEl = document.getElementById('node-' + node.id);
+            if (!nodeEl) {
+                nodeEl = document.createElement('div');
+                nodeEl.id = 'node-' + node.id;
+                nodeEl.className = 'node';
+                treeViewEl.appendChild(nodeEl);
+            }
+            
+            nodeEl.className = 'node ' + node.status;
+            nodeEl.innerHTML = `
+                <div class="node-header">
+                    <span class="node-intent">${node.intent || node.id}</span>
+                    <span class="node-status">${node.status}</span>
+                </div>
+                <div style="font-size: 12px; color: #94a3b8;">深度: ${node.depth}</div>
+                <div class="node-code">${node.code}</div>
+            `;
+        }
+        
+        // 发送消息
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            addMessage('explanation', '👤 你: ' + message);
+            
+            ws.send(JSON.stringify({
+                type: 'user_message',
+                content: message
+            }));
+            
+            userInput.value = '';
+        }
+        
+        // 事件监听
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        // 启动
+        init();
+    </script>
+</body>
+</html>
+
