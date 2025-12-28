@@ -1,14 +1,13 @@
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, observation)
-The variables you can use is:
-- instruction (str): Your task is to: look at bowl under the desklamp.
-- observation (str): You are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 1, a drawer 3, a drawer 2, a drawer 1, a garbagecan 1, a safe 1, a shelf 5, a shelf 4, a shelf 3, a shelf 2, a shelf 1, a sidetable 2, and a sidetable 1.
+你可以使用的变量是：
+- instruction (str): 你的任务是：在台灯下看碗。
+- observation (str): 你在房间中间。快速环顾四周，你看到一张床 1、一张书桌 1、抽屉 3、抽屉 2、抽屉 1、垃圾桶 1、保险箱 1、架子 5、架子 4、架子 3、架子 2、架子 1、茶几 2 和茶几 1。
 
 [Output]
-<think>
-I can extract all location IDs from the initial observation. I need to look at a bowl under the desklamp. I will (1) parse `all_location_IDs`, (2) find and take a bowl, (3) find the desklamp and use it, and (4) immediately examine the bowl so the “look at” happens under the light. Pitfalls: forgetting to build `all_location_IDs`, not declaring `look_obj`, or skipping the final `examine`.
-</think>
+我可以从初始观察中提取所有位置 ID。我需要在台灯下看碗。我将（1）解析 `all_location_IDs`，（2）找到并拿起一个碗，（3）找到台灯并使用它，（4）立即检查碗，以便"看"发生在灯光下。常见错误：忘记构建 `all_location_IDs`，不声明 `look_obj`，或跳过最后的 `examine`。
+
 
 <execute>
 obj = 'bowl'
@@ -23,16 +22,15 @@ find_and_use_to_look_at(look_obj, obj_ID)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, observation)
-The variables you can use is:
-- instruction (str): Your task is to: examine the pen with the desklamp.
-- observation (str): You are in the middle of a room. Looking quickly around you, you see a bed 1, a drawer 10, a drawer 9, a drawer 8, a drawer 7, a drawer 6, a drawer 5, a drawer 4, a drawer 3, a drawer 2, a drawer 1, a dresser 1, a garbagecan 1, a shelf 9, a shelf 8, a shelf 7, a shelf 6, a shelf 5, a shelf 4, a shelf 3, a shelf 2, and a shelf 1.
+你可以使用的变量是：
+- instruction (str): 你的任务是：用台灯检查笔。
+- observation (str): 你在房间中间。快速环顾四周，你看到一张床 1、抽屉 10、抽屉 9、抽屉 8、抽屉 7、抽屉 6、抽屉 5、抽屉 4、抽屉 3、抽屉 2、抽屉 1、梳妆台 1、垃圾桶 1、架子 9、架子 8、架子 7、架子 6、架子 5、架子 4、架子 3、架子 2 和架子 1。
 
 [Output]
-<think>
-I need the same pattern but for a pen. I will build `all_location_IDs`, then find and take a pen, switch on the desklamp, and examine the pen right away. Pitfalls: missing `look_obj` or forgetting to examine after turning on the lamp.
-</think>
+我需要相同的模式，但是针对笔。我将构建 `all_location_IDs`，然后找到并拿起一支笔，打开台灯，并立即检查笔。常见错误：遗漏 `look_obj` 或打开灯后忘记检查。
+
 
 <execute>
 obj = 'pen'
@@ -47,16 +45,15 @@ find_and_use_to_look_at(look_obj, obj_ID)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 obj_ID = find_and_take(obj, all_location_IDs)
-The variables you can use is:
+你可以使用的变量是：
 - obj (str): apple
 - all_location_IDs (list[str]): ['cabinet 4', 'cabinet 3', 'cabinet 2', 'cabinet 1', 'coffeemachine 1', 'countertop 1', 'diningtable 3', 'diningtable 2', 'diningtable 1', 'drawer 1', 'fridge 1', 'garbagecan 1', 'microwave 1', 'sidetable 1', 'sinkbasin 1', 'stoveburner 4', 'stoveburner 3', 'stoveburner 2', 'stoveburner 1', 'toaster 1']
 
 [Output]
-<think>
-The goal is to navigate the room methodically to find any instance of the target object and pick it up. I will iterate through the known locations, always navigating first. If a location produces no new information, I will examine it. When a location is closed, I will open it before searching. Once I observe a concrete `{obj} k` mention, I will parse that exact ID and take it from the current location. Common pitfalls include not examining after navigation (missing items), failing to open a closed container, or taking without the full `obj_ID`.
-</think>
+目标是有条理地在房间里导航以找到目标物品的任何实例并拿起它。我将遍历已知位置，总是先导航。如果一个位置没有产生新信息，我会检查它。当一个位置关闭时，我会在搜索前打开它。一旦我观察到具体的 `{obj} k` 提到，我会解析那个确切的 ID 并从当前位置拿起它。常见错误包括导航后不检查（遗漏物品）、未能打开关闭的容器，或在没有完整 `obj_ID` 的情况下拿取。
+
 
 <execute>
 for location_ID in all_location_IDs:
@@ -66,7 +63,7 @@ for location_ID in all_location_IDs:
     location_closed = 'closed' in obs
     if location_closed:
         obs = run(f'open {location_ID}')
-    if f" {obj} " in obs: # Prevent names from containing relationships
+    if f" {obj} " in obs: # 防止名称包含关系
         obj_ID = re.search(rf'\b{obj} \d+\b', obs).group()
         run(f'take {obj_ID} from {location_ID}')
         break
@@ -76,16 +73,15 @@ for location_ID in all_location_IDs:
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 find_and_use_to_look_at(look_obj, obj_ID)
-The variables you can use is:
+你可以使用的变量是：
 - look_obj (str): desklamp
 - obj_ID (str): bowl 1
 
 [Output]
-<think>
-I will search for the desklamp just like any object: navigate, examine if needed, open if closed, and when I see it, extract its ID and use it. Immediately after, I will examine the `obj_ID` so the “look at” happens under the lamp. Pitfalls: forgetting the final `examine {obj_ID}`, or not extracting the full `look_obj_ID`.
-</think>
+我会像对待任何物品一样搜索台灯：导航、需要时检查、关闭时打开，当我看到它时，提取其 ID 并使用它。紧接着，我会检查 `obj_ID`，以便"看"发生在灯下。常见错误：忘记最后的 `examine {obj_ID}`，或不提取完整的 `look_obj_ID`。
+
 
 <execute>
 for location_ID in all_location_IDs:

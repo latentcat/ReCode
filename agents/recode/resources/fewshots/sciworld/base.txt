@@ -1,22 +1,21 @@
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, observation)
-The variables you can use is:
-- instruction (str): Your task is to use chemistry to create green paint. When you are done, focus on the green paint.
-- observation (str): This room is called the bedroom. In it, you see:
-the agent
-a substance called air
-a bed. On the bed is: a mattress. On the mattress is: a white pillow.
-a closet. The closet door is open. In the closet is: nothing.
-a picture
-a table. On the table is: nothing.
-You also see:
-A door to the hallway (that is open)
+你可以使用的变量是：
+- instruction (str): 你的任务是使用化学方法创建绿色颜料。完成后，专注于绿色颜料。
+- observation (str): 这个房间叫卧室。在里面，你看到：
+特工
+一种称为空气的物质
+一张床。在床上有一个床垫。在床垫上有一个白色枕头。
+一个衣柜。衣柜门是打开的。在衣柜里什么都没有。
+一幅画
+一张桌子。在桌子上什么都没有。
+你还看到：
+一扇通往走廊的门（是打开的）
 
 [Output]
-<think>
-I need to find materials to create green paint, which are likely to be found in an art studio. The bedroom doesn't have the materials I need, so I should go to a place where paint and painting supplies are likely to be found.
-</think>
+我需要找到创建绿色颜料的材料，这些材料很可能在艺术工作室找到。卧室没有我需要的材料，所以我应该去一个可能找到颜料和绘画用品的地方。
+
 
 <execute>
 run("teleport to art studio")
@@ -28,25 +27,24 @@ solve(instruction, obs)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, obs)
-The variables you can use is:
-- instruction (str): Your task is to use chemistry to create green paint. When you are done, focus on the green paint.
-- obs (str): This room is called the art studio. In it, you see:
-the agent
-a substance called air
-a large cupboard. The large cupboard door is open. In the large cupboard is: a drawer, a wood cup (containing yellow paint), a wood cup (containing blue paint), a wood cup (containing red paint).
-a table. On the table is: a glass cup (containing nothing).
-a wood cup (containing yellow paint)
-a wood cup (containing blue paint)
-a wood cup (containing red paint)
-You also see:
-A door to the hallway (that is open)
+你可以使用的变量是：
+- instruction (str): 你的任务是使用化学方法创建绿色颜料。完成后，专注于绿色颜料。
+- obs (str): 这个房间叫艺术工作室。在里面，你看到：
+特工
+一种称为空气的物质
+一个大橱柜。大橱柜门是打开的。在大橱柜里有一个抽屉，一个木杯（含有黄色颜料），一个木杯（含有蓝色颜料），一个木杯（含有红色颜料）。
+一张桌子。在桌子上有一个玻璃杯（什么都没有）。
+一个木杯（含有黄色颜料）
+一个木杯（含有蓝色颜料）
+一个木杯（含有红色颜料）
+你还看到：
+一扇通往走廊的门（是打开的）
 
 [Output]
-<think>
-Now that I'm in the art studio, I can see blue paint and yellow paint which are the primary colors needed to mix green paint. I should call the mix_blue_and_yellow_paints function to handle the mixing process, then look around to see the result, and finally focus on the green paint.
-</think>
+现在我在艺术工作室，我可以看到蓝色颜料和黄色颜料，这是混合绿色颜料所需的原色。我应该调用 mix_blue_and_yellow_paints 函数来处理混合过程，然后环顾四周看结果，最后专注于绿色颜料。
+
 
 <execute>
 mix_blue_and_yellow_paints(obs)
@@ -58,24 +56,23 @@ focus_on_green_paint(obs)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 mix_blue_and_yellow_paints(obs)
-The variables you can use is:
-- obs (str): This room is called the art studio. In it, you see:
-the agent
-a substance called air
-a large cupboard. The large cupboard door is open. In the large cupboard is: a drawer, a wood cup (containing yellow paint), a wood cup (containing blue paint), a wood cup (containing red paint).
-a table. On the table is: a glass cup (containing nothing).
-a wood cup (containing yellow paint)
-a wood cup (containing blue paint)
-a wood cup (containing red paint)
-You also see:
-A door to the hallway (that is open)
+你可以使用的变量是：
+- obs (str): 这个房间叫艺术工作室。在里面，你看到：
+特工
+一种称为空气的物质
+一个大橱柜。大橱柜门是打开的。在大橱柜里有一个抽屉，一个木杯（含有黄色颜料），一个木杯（含有蓝色颜料），一个木杯（含有红色颜料）。
+一张桌子。在桌子上有一个玻璃杯（什么都没有）。
+一个木杯（含有黄色颜料）
+一个木杯（含有蓝色颜料）
+一个木杯（含有红色颜料）
+你还看到：
+一扇通往走廊的门（是打开的）
 
 [Output]
-<think>
-I can see blue paint and yellow paint available. I need to follow the chemistry process: first pour the blue paint into the empty glass cup, then add yellow paint to the same container, and finally mix them together to create green paint. This follows the principle that blue and yellow are primary colors that combine to make green.
-</think>
+我可以看到蓝色颜料和黄色颜料可用。我需要遵循化学过程：首先将蓝色颜料倒入空的玻璃杯中，然后将黄色颜料加入同一个容器，最后混合它们以创建绿色颜料。这遵循蓝色和黄色是混合产生绿色的原色的原理。
+
 
 <execute>
 run("pour cup containing blue paint in art studio into cup containing nothing")
@@ -87,24 +84,23 @@ obs = run("mix cup containing blue paint and yellow paint")
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 focus_on_green_paint(obs)
-The variables you can use is:
-- obs (str): This room is called the art studio. In it, you see:
-the agent
-a substance called air
-a large cupboard. The large cupboard door is open. In the large cupboard is: a drawer, a wood cup (containing yellow paint), a wood cup (containing blue paint), a wood cup (containing red paint).
-a table. On the table is: a glass cup (containing green paint).
-a wood cup (containing yellow paint)
-a wood cup (containing blue paint)
-a wood cup (containing red paint)
-You also see:
-A door to the hallway (that is open)
+你可以使用的变量是：
+- obs (str): 这个房间叫艺术工作室。在里面，你看到：
+特工
+一种称为空气的物质
+一个大橱柜。大橱柜门是打开的。在大橱柜里有一个抽屉，一个木杯（含有黄色颜料），一个木杯（含有蓝色颜料），一个木杯（含有红色颜料）。
+一张桌子。在桌子上有一个玻璃杯（含有绿色颜料）。
+一个木杯（含有黄色颜料）
+一个木杯（含有蓝色颜料）
+一个木杯（含有红色颜料）
+你还看到：
+一扇通往走廊的门（是打开的）
 
 [Output]
-<think>
-Perfect! I can see that the glass cup now contains green paint. The task is to create green paint and then focus on it. Now that the green paint is made, I should concentrate on the final product.
-</think>
+完美！我可以看到玻璃杯现在含有绿色颜料。任务是创建绿色颜料，然后专注于它。现在绿色颜料已经制作完成，我应该专注于最终产品。
+
 
 <execute>
 run("focus on green paint")

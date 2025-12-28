@@ -1,31 +1,31 @@
 EXPAND_PROMPT = """
-You are the EXPAND step in the LLM Agent loop. You need to replace the current placeholder function node with its code implementation.
+你是 LLM Agent 循环中的 EXPAND 步骤。你需要用代码实现替换当前的占位函数节点。
 
-Decide how to implement the placeholder:
-- If the subtask of current function can be done in 1-2 primitive actions from the list below, write them directly using `run(action: str)`.
-- If it will take more than 2 primitive actions, instead break it into smaller placeholder functions. Each sub-goal should be clear, meaningful, and ordered so that completing them achieves the current task.
+决定如何实现占位函数：
+- 如果当前函数的子任务可以用下面的列表中 1-2 个原子动作完成，直接使用 `run(action: str)` 编写它们。
+- 如果需要超过 2 个原子动作，则将其拆分成更小的占位函数。每个子目标应该清晰、有意义，并且有序，完成它们可以实现当前任务。
 
-All legal primitive actions are:
+所有合法的原子动作是：
 {available_actions}
-And all of them should be used in the function `run(action: str) -> str`, which returns an observation in string format.
+所有动作都应该在函数 `run(action: str) -> str` 中使用，该函数返回字符串格式的观察结果。
 
-All the placeholder functions should be used in the format: var_out1, var_out2, ... = snake_style_function_name(var_in1, var_in2="explicitly declared variables will also be registered", ...), in which the function name should explicitly represents the subtask you are going to take.
+所有占位函数应该使用以下格式：var_out1, var_out2, ... = snake_style_function_name(var_in1, var_in2="显式声明的变量也将被注册", ...)，其中函数名应该明确表示你将要执行的子任务。
 
-Do not invent or guess any details that are not present in the provided variables. If essential information is missing or uncertain (such as which target to use, what value to set, or which step to take next), write a descriptive placeholder function that explicitly represents the missing decision), to be expanded later.
-Do not assume that any condition or prerequisite is already met unless explicitly confirmed. If something must be prepared, accessed, or changed, include explicit steps or sub-goals to do so.
+不要发明或猜测任何未在提供变量中出现的细节。如果缺少基本信息或不确定（例如要使用哪个目标、设置什么值或下一步采取什么步骤），编写一个描述性的占位函数，明确表示缺失的决策），以便稍后展开。
+不要假设任何条件或先决条件已经满足，除非明确确认。如果必须准备、访问或更改某些内容，请包含显式步骤或子目标来完成。
 
-In your response:
-1. Start with a brief natural language explanation of how you will complete or break down the task, encluded with <think> and </think>.
-2. Then output a Python code with <execute> and </execute> tags, containing only valid actions or commands for this environment. Do not create functions with `def`, and do not place placeholder functions inside loop or condition structures.
+在你的响应中：
+1. 以简短的自然语言解释开始，说明你将如何完成或分解任务，包含在  和  标签内
+2. 然后输出带有 <execute> 和 </execute> 标签的 Python 代码，仅包含此环境的有效动作或命令。不要创建带有 `def` 的函数，也不要将占位函数放在循环或条件结构中。
 
 ---
-Here are some examples to guide the style and format, each example is ONLY ONE turn of the interaction:
+以下是一些指导风格和格式的示例，每个示例仅是交互的一个回合：
 {examples}
-(End of Examples)
+（示例结束）
 ---
 
-The current function to expand is:
+当前要展开的函数是：
 {task}
-The variables you can use is:
+你可以使用的变量是：
 {variables}
 """

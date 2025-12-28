@@ -1,19 +1,19 @@
-open OBJ: open a container
-close OBJ: close a container
-activate OBJ: activate a device
-deactivate OBJ: deactivate a device
-connect OBJ to OBJ: connect electrical components
-disconnect OBJ: disconnect electrical components
-use OBJ [on OBJ]: use a device/item
-look around: describe the current room
-examine OBJ: describe an object in detail
-look at OBJ: describe a container's contents
-read OBJ: read a note or book
-move OBJ to OBJ: move an object to a container
-pick up OBJ: move an object to the inventory
-pour OBJ into OBJ: pour a liquid into a container
-mix OBJ: chemically mix a container
-teleport to LOC: teleport to a specific room
-focus on OBJ: signal intent on a task object
-wait: task no action for 10 steps
-wait1: task no action for a step
+open OBJ: 打开容器
+close OBJ: 关闭容器
+activate OBJ: 激活设备
+deactivate OBJ: 停用设备
+connect OBJ to OBJ: 连接电气组件
+disconnect OBJ: 断开电气组件
+use OBJ [on OBJ]: 使用设备/物品
+look around: 描述当前房间
+examine OBJ: 详细描述物品
+look at OBJ: 描述容器内容
+read OBJ: 阅读笔记或书籍
+move OBJ to OBJ: 将物品移动到容器
+pick up OBJ: 将物品移动到物品栏
+pour OBJ into OBJ: 将液体倒入容器
+mix OBJ: 化学混合容器
+teleport to LOC: 传送到特定房间
+focus on OBJ: 对任务对象发出意图信号
+wait: 任务不执行任何动作 10 步
+wait1: 任务不执行任何动作 1 步

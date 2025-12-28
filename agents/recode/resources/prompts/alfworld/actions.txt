@@ -1,11 +1,11 @@
-- go to {loc_ID}  
-- open {loc_ID}
-- close {loc_ID}
-- take {obj_ID} from {loc_ID}
-- move {obj_ID} to {loc_ID}
-- use {desklamp_ID}
-- inventory
-- heat {obj_ID} with {microwave_ID}
-- cool {obj_ID} with {fridge_ID}
-- clean {obj_ID} with {sinkbasin_ID}
-- exmaine {loc_ID}
+- go to {loc_ID}          前往位置
+- open {loc_ID}           打开容器
+- close {loc_ID}          关闭容器
+- take {obj_ID} from {loc_ID}  从位置取走物品
+- move {obj_ID} to {loc_ID}   将物品移动到位置
+- use {desklamp_ID}       使用台灯
+- inventory              查看物品栏
+- heat {obj_ID} with {microwave_ID}  用微波炉加热物品
+- cool {obj_ID} with {fridge_ID}    用冰箱冷却物品
+- clean {obj_ID} with {sinkbasin_ID} 用水槽清洗物品
+- examine {loc_ID}       检查位置

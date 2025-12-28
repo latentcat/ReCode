@@ -1,18 +1,18 @@
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, observation)
-The variables you can use is:
-- instruction (str): Your task is to: find some apple and put it in sidetable.
-- observation (str): You are in the middle of a room. Looking quickly around you, you see a cabinet 4, a cabinet 3, a cabinet 2, a cabinet 1, a coffeemachine 1, a countertop 1, a diningtable 3, a diningtable 2, a diningtable 1, a drawer 1, a fridge 1, a garbagecan 1, a microwave 1, a sidetable 1, a sinkbasin 1, a stoveburner 4, a stoveburner 3, a stoveburner 2, a stoveburner 1, and a toaster 1.
+你可以使用的变量是：
+- instruction (str): 你的任务是：找到一些苹果并将其放在茶几上。
+- observation (str): 你在房间中间。快速环顾四周，你看到一个橱柜 4、橱柜 3、橱柜 2、橱柜 1、咖啡机 1、台面 1、餐桌 3、餐桌 2、餐桌 1、抽屉 1、冰箱 1、垃圾桶 1、微波炉 1、茶几 1、水槽 1、炉灶 4、炉灶 3、炉灶 2、炉灶 1 和烤面包机 1。
 
 [Output]
-<think>
-This is a pure acquisition-and-place task. The target is `sidetable 1`, which is a surface and does not need to be opened. I will persist the target and parse all locations from the initial observation. The plan has two phases: (1) find and take an apple by iterating the remaining locations, opening closed storage as needed and extracting the exact ID; (2) navigate to the sidetable and move the apple onto it. Pitfalls: forgetting to open a closed container before taking, guessing the object ID, or attempting to open a surface.
 </think>
+这是一个纯粹的获取和放置任务。目标是 `茶几 1`，它是一个表面，不需要打开。我会记住目标并从初始观察中解析所有位置。计划有两个阶段：（1）通过迭代剩余位置找到并拿取苹果，需要时打开关闭的存储并提取确切的 ID；（2）导航到茶几并将苹果移动到上面。常见错误：在拿取之前忘记打开关闭的容器，猜测物品 ID，或尝试打开表面。
+
 
 <execute>
 obj = 'apple'
-target_location_ID = 'sidetable 1'
+target_location_ID = '茶几 1'
 all_location_IDs = re.findall(r'[a-z]+(?:[a-z]+)? \d+', observation)
 
 obj_ID = find_and_take(obj, all_location_IDs)
@@ -23,20 +23,19 @@ put_in(obj_ID, target_location_ID)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 solve(instruction, observation)
-The variables you can use is:
-- instruction (str): Your task is to: put some spraybottle on toilet.
-- observation (str): You are in the middle of a room. Looking quickly around you, you see a cabinet 4, a cabinet 3, a cabinet 2, a cabinet 1, a countertop 1, a garbagecan 1, a handtowelholder 2, a handtowelholder 1, a sinkbasin 2, a sinkbasin 1, a toilet 1, a toiletpaperhanger 1, and a towelholder 1.
+你可以使用的变量是：
+- instruction (str): 你的任务是：将一些喷雾瓶放在马桶上。
+- observation (str): 你在房间中间。快速环顾四周，你看到一个橱柜 4、橱柜 3、橱柜 2、橱柜 1、台面 1、垃圾桶 1、手巾架 2、手巾架 1、水槽 2、水槽 1、马桶 1、卫生纸架 1 和毛巾架 1。
 
 [Output]
-<think>
-The target is `toilet 1`, treated as a non-openable surface for placement. I will persist the target. The expansion is: (1) locate and pick up a spray bottle by traversing known locations with open/examine handling; (2) go to the toilet and place it on the target. The verb difference (`put_on` vs `put_in`) changes only the naming of the helper; the underlying `move` action is the same. Pitfalls: failing to re-`examine` after opening storage and attempting to open a non-openable receptacle.
-</think>
+目标是 `马桶 1`，被视为不可打开的表面进行放置。我会记住目标。展开是：（1）通过遍历已知位置并处理打开/检查来定位并拿起喷雾瓶；（2）去马桶并放在目标上。动词差异（`put_on` vs `put_in`）仅改变辅助函数的命名；底层的 `move` 动作是一样的。常见错误：打开存储后没有重新 `检查` 或尝试打开不可打开的容器。
+
 
 <execute>
 obj = 'spraybottle'
-target_location_ID = 'toilet 1'
+target_location_ID = '马桶 1'
 all_location_IDs = re.findall(r'[a-z]+(?:[a-z]+)? \d+', observation)
 
 obj_ID = find_and_take(obj, all_location_IDs)
@@ -47,16 +46,15 @@ put_on(obj_ID, target_location_ID)
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 obj_ID = find_and_take(obj, all_location_IDs)
-The variables you can use is:
+你可以使用的变量是：
 - obj (str): apple
 - all_location_IDs (list[str]): ['cabinet 4', 'cabinet 3', 'cabinet 2', 'cabinet 1', 'coffeemachine 1', 'countertop 1', 'diningtable 3', 'diningtable 2', 'diningtable 1', 'drawer 1', 'fridge 1', 'garbagecan 1', 'microwave 1', 'sidetable 1', 'sinkbasin 1', 'stoveburner 4', 'stoveburner 3', 'stoveburner 2', 'stoveburner 1', 'toaster 1']
 
 [Output]
-<think>
-The goal is to navigate the room methodically to find any instance of the target object and pick it up. I will iterate through the known locations, always navigating first. If a location produces no new information, I will examine it. When a location is closed, I will open it before searching. Once I observe a concrete `{obj} k` mention, I will parse that exact ID and take it from the current location. Common pitfalls include not examining after navigation (missing items), failing to open a closed container, or taking without the full `obj_ID`.
-</think>
+目标是有条理地在房间里导航以找到目标物品的任何实例并拿起它。我将遍历已知位置，总是先导航。如果一个位置没有产生新信息，我会检查它。当一个位置关闭时，我会在搜索前打开它。一旦我观察到具体的 `{obj} k` 提到，我会解析那个确切的 ID 并从当前位置拿起它。常见错误包括导航后不检查（遗漏物品）、未能打开关闭的容器，或在没有完整 `obj_ID` 的情况下拿取。
+
 
 <execute>
 for location_ID in all_location_IDs:
@@ -66,7 +64,7 @@ for location_ID in all_location_IDs:
     location_closed = 'closed' in obs
     if location_closed:
         obs = run(f'open {location_ID}')
-    if f" {obj} " in obs: # Prevent names from containing relationships
+    if f" {obj} " in obs: # 防止名称包含关系
         obj_ID = re.search(rf'\b{obj} \d+\b', obs).group()
         run(f'take {obj_ID} from {location_ID}')
         break
@@ -76,16 +74,15 @@ for location_ID in all_location_IDs:
 
 
 [Input]
-The current function to expand is:
+当前要展开的函数是：
 put_in(obj_ID, target_location_ID)
-The variables you can use is:
+你可以使用的变量是：
 - obj_ID (str): apple 1
 - target_location_ID (str): sidetable 1
 
 [Output]
-<think>
-I will navigate to the target location, examine if nothing happens, determine if it is closed, and open if needed. Then I will move the object in. This logic supports both containers (openable) and surfaces (non-openable, but harmless to check). Pitfalls: using the wrong ID in `examine` or skipping the `location_closed` check.
-</think>
+我会导航到目标位置，如果没有发生任何事情就检查它，确定它是否关闭，如果需要就打开。然后我会把物品移入里面。这个逻辑支持容器（可打开）和表面（不可打开，但检查也无害）。常见错误：在 `examine` 中使用错误的 ID 或跳过 `location_closed` 检查。
+
 
 <execute>
 obs = run(f'go to {target_location_ID}')

@@ -1,3 +1,3 @@
-- search[keywords]
-- click[element]
-- click[Buy Now]
+- search[keywords]      搜索关键词
+- click[element]        点击元素
+- click[Buy Now]       点击购买按钮
